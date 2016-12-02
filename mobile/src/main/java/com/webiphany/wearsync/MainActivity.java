@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements DataApi.DataListe
 
 
     private void setupDataLayer() {
-        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle connectionHint) {
