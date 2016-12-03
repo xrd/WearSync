@@ -55,24 +55,38 @@ public class MainActivity extends AppCompatActivity implements DataApi.DataListe
     private static final String START_ACTIVITY = "/start_activity";
 
     private void sendMessage( final String path, final String text ) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-                }
 
-                runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText( getApplicationContext(), "Sent message", Toast.LENGTH_LONG).show();
-                    }
-                });
+        new Thread(new Runnable() {
+            public void run() {
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mApiClient).await();
+
+                for (Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes()).await();
+                }
             }
         }).start();
+
+        Toast.makeText(getApplicationContext(), "Sent message", Toast.LENGTH_SHORT).show();
     }
+//        new Thread( new Runnable() {
+//            @Override
+//            public void run() {
+//                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+//                for(Node node : nodes.getNodes()) {
+//                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+//                            mApiClient, node.getId(), path, text.getBytes() ).await();
+//                }
+//
+//                runOnUiThread( new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Toast.makeText( getApplicationContext(), "Sent message", Toast.LENGTH_LONG).show();
+//                    }
+//                });
+//            }
+//        }).start();
+//    }
 
 
     private void setupDataLayer() {

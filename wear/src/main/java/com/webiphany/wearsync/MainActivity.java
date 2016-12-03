@@ -1,13 +1,16 @@
 package com.webiphany.wearsync;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
@@ -17,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class MainActivity extends WearableActivity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks {
+public class MainActivity extends WearableActivity implements MessageApi.MessageListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
             new SimpleDateFormat("HH:mm", Locale.US);
@@ -74,6 +77,8 @@ public class MainActivity extends WearableActivity implements MessageApi.Message
     private void initGoogleApiClient() {
         mApiClient = new GoogleApiClient.Builder( this )
                 .addApi( Wearable.API )
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
                 .build();
 
         mApiClient.connect();
@@ -94,8 +99,6 @@ public class MainActivity extends WearableActivity implements MessageApi.Message
     @Override
     public void onMessageReceived( final MessageEvent messageEvent ) {
         runOnUiThread( new Runnable() {
-
-            @Override
             public void run() {
                 if( messageEvent.getPath().equalsIgnoreCase( WEAR_MESSAGE_PATH ) ) {
                     String message = new String( messageEvent.getData() );
@@ -105,5 +108,10 @@ public class MainActivity extends WearableActivity implements MessageApi.Message
                 }
             }
         });
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.v( "WearSync", "Failed to connect");
     }
 }
